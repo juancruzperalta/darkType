@@ -67,6 +67,7 @@ const messageLogin = document.getElementById('messageLogin');
 const formLogin = document.getElementById('formLogin');
 const submitLogin = document.querySelector('#submitLogin');
 const submitRegister = document.querySelector('#submitRegister');
+const isLoggedIn = localStorage.getItem('isLoggedIn');
 const messageErrorFunc = (msg) => {
   messageError.classList.remove('hidden');
   messageError.classList.add('flex');
@@ -93,6 +94,7 @@ async function registerUser(userName, email, password) {
 }
 
 formRegister.addEventListener('submit', async (e) => {
+  if(!isLoggedIn){
   e.preventDefault();
 
   const userName = document.getElementById('userName').value;
@@ -118,8 +120,10 @@ formRegister.addEventListener('submit', async (e) => {
     messageErrorFunc("Usuario registrado correctamente");
   }
   formRegister.reset();
+  }
 });
 async function loginUser(email, password) {
+  if(!isLoggedIn){
    let { data, error } = await supabase
     .from('user')
     .select('user_name, password')
@@ -138,6 +142,7 @@ async function loginUser(email, password) {
     return;
   }
   return { data };
+  }
 }
 const messageLoginFunc = (msg) => {
   messageLogin.classList.remove('hidden');
@@ -174,7 +179,6 @@ formLogin.addEventListener('submit', async (e) => {
 
 });
 
-const isLoggedIn = localStorage.getItem('isLoggedIn');
 if(isLoggedIn){
   submitLogin.disabled = true;
   submitRegister.disabled = true;

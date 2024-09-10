@@ -10,3 +10,6 @@ This project is a version on a write velocity, it is a made by Juan Cruz Peralta
 --Gracias SUPABASE por la base de datos.
 --VERSION 10-09-2024
 --Subida de git desde 0 sin API KEY.
+--
+Agregar tiempo
+Añadir resultado e información al terminar el texto o el tiempo.
