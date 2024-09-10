@@ -1,0 +1,48 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/keyboard-solid.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+<style is:global>
+  :root{
+    --text-color:rgb(224, 222, 222);
+  }
+	html {
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		background: #13151a;
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+   color:var(--text-color);
+   min-height: 100vh;
+}
+  body{
+    width: 1200px;
+    position: relative;
+  }
+  .wrapper{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  main{
+    flex: 1
+  }
+</style>

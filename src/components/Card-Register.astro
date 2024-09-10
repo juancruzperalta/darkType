@@ -1,0 +1,185 @@
+<div class="flex flex-row h-[600px] items-center justify-center rounded-md ">
+    <form id="formLogin" class="flex flex-col gap-4 w-[480px] mt-8 p-8">
+    <div class="font-bold text-3xl flex gap-1"><svg class="w-7 h-7 fill-gray-200"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l362.8 0c-5.4-9.4-8.6-20.3-8.6-32l0-128c0-2.1 .1-4.2 .3-6.3c-31-26-71-41.7-114.6-41.7l-91.4 0zM528 240c17.7 0 32 14.3 32 32l0 48-64 0 0-48c0-17.7 14.3-32 32-32zm-80 32l0 48c-17.7 0-32 14.3-32 32l0 128c0 17.7 14.3 32 32 32l160 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32l0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80z"/></svg>
+      <span>
+        Login
+      </span>
+    </div>
+    <input class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="email" name="LoginEmail" id="LoginEmail" placeholder="Email">
+    <input class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="password" name="LoginPassword" id="LoginPassword" placeholder="Password">
+    <button type="submit" id="submitLogin" class=" bg-[#2c0076]  text-gray-200 text-xl font-bold p-4 rounded-md border-none disabled:opacity-90">Sign In</button>
+          <div class="hidden p-4 bg-green-500 rounded-md" id="messageLogin"></div>
+</form>
+  <form id="formRegister" class="flex flex-col gap-4 w-[480px] mt-8 p-8">
+    <div class="font-bold text-3xl flex gap-1"><svg class="w-7 h-7 fill-gray-200 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM504 312l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+      <span>
+        Register
+      </span>
+    </div>
+        <input class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="text" 
+    name="userName" 
+    id="userName" 
+    placeholder="User Name" 
+    required       
+    title="User Name is required" >
+    <input class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="email" 
+    name="email" 
+    id="emailRegister" 
+    placeholder="Email" 
+    required       
+    pattern="^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$"
+    title="Email is required" >
+    <input 
+    class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="email" 
+    name="verifyEmail" 
+    id="verifyEmail" 
+    placeholder="verify Email" 
+    required       
+    pattern="^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$"
+    title="Email is required"
+    >
+    <input 
+    class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="password" 
+    name="password" 
+    id="passwordRegister" 
+    placeholder="Password" 
+    required 
+    title="Password is required">
+  <input 
+  class="p-4 outline-none bg-[#23252b] placeholder:text-gray-200 rounded-md border-none font-semibold text-xl" type="password" 
+  name="verifyPassword" 
+  id="verifyPassword" 
+  placeholder="verify Password"
+  required 
+  title="Password is required">
+      <button type="submit" id="submitRegister" class="bg-[#2c0076] text-gray-200 text-xl font-bold  p-4 rounded-md border-none disabled:opacity-90">Sign Up</button>
+      <div class="hidden p-4 bg-red-500 rounded-md" id="messageError"></div>
+    </form>
+
+</div>
+
+<script>
+import { supabase } from '../supabaseClient.js';
+import bcrypt from 'bcryptjs';
+const messageError = document.querySelector('#messageError');
+const formRegister = document.getElementById('formRegister');
+const messageLogin = document.getElementById('messageLogin');
+const formLogin = document.getElementById('formLogin');
+const submitLogin = document.querySelector('#submitLogin');
+const submitRegister = document.querySelector('#submitRegister');
+const messageErrorFunc = (msg) => {
+  messageError.classList.remove('hidden');
+  messageError.classList.add('flex');
+  messageError.textContent = msg;
+  setTimeout(() => {
+    messageError.classList.add('hidden');
+    messageError.classList.remove('flex');
+  }, 3000);
+}
+
+async function registerUser(userName, email, password) {
+  const passwordHash = await bcrypt.hash(password, 10)
+  let { data, error } = await supabase.from('user').insert([{
+    user_name: userName,
+    email: email,
+    password: passwordHash,
+  }])
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { data };
+}
+
+formRegister.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const userName = document.getElementById('userName').value;
+  const email = document.getElementById('emailRegister').value;
+  const verifyEmail = document.getElementById('verifyEmail').value;
+  const password = document.getElementById('passwordRegister').value;
+  const verifyPassword = document.getElementById('verifyPassword').value;
+
+  if (email !== verifyEmail || password !== verifyPassword) {
+    messageErrorFunc("Emails o contraseñas no coinciden");
+    return;
+  }
+
+  if (email === '' || verifyEmail === '' || password === '' || verifyPassword === '' || userName === ' ') {
+    messageErrorFunc("Debes completar todos los campos");
+    return;
+  }
+
+  const response = await registerUser(userName, email, password);
+  if (response.error) {
+    messageErrorFunc(`Error: ${response.error}`);
+  } else {
+    messageErrorFunc("Usuario registrado correctamente");
+  }
+  formRegister.reset();
+});
+async function loginUser(email, password) {
+   let { data, error } = await supabase
+    .from('user')
+    .select('user_name, password')
+    .eq('email', email)
+    .single();
+
+  const passwordHash = data.password;
+  if (error) {
+    return { error: error.message };
+  }
+  const isMatch = await bcrypt.compare(password, passwordHash);
+  localStorage.setItem('userName', data.user_name);
+  localStorage.setItem('isLoggedIn', 'true');
+  if(!isMatch){
+    messageErrorFunc("La contraseña es incorrecta");
+    return;
+  }
+  return { data };
+}
+const messageLoginFunc = (msg) => {
+  messageLogin.classList.remove('hidden');
+  messageLogin.classList.add('flex');
+  messageLogin.textContent = msg;
+  setTimeout(() => {
+    messageLogin.classList.add('hidden');
+    messageLogin.classList.remove('flex');
+  }, 3000);
+}
+formLogin.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Obtener los valores del formulario
+  const email = document.getElementById('LoginEmail').value;
+  const password = document.getElementById('LoginPassword').value;
+  // Validar que ambos campos tengan contenido
+  if (!email || !password) {
+    messageLoginFunc('Debes ingresar ambos campos.');
+    return;
+  }
+
+  // Llamar a la función de login
+  const response = await loginUser(email, password);
+  if (response.error) {
+    messageLoginFunc('Credenciales incorrectas');
+  } else {
+    messageLoginFunc('Login exitoso');
+    setTimeout(() => {
+      
+      location.reload();
+    }, 1000);
+  }
+
+});
+
+const isLoggedIn = localStorage.getItem('isLoggedIn');
+if(isLoggedIn){
+  submitLogin.disabled = true;
+  submitRegister.disabled = true;
+}else{
+    submitLogin.disabled = false;
+  submitRegister.disabled = false;
+}
+  </script>
