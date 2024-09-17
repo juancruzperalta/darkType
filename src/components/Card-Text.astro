@@ -1,59 +1,41 @@
-<div class="mt-8 p-12">
-      <p class="text-gray-500 mt-4 text-4xl" id="parraf"></p>
-        <input autofocus class="opacity-0">
-        <button><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
-</div>
-<style is:global>
-   section{
-    width: 800px;
-  }
-  x-letter{
-    position: relative;
-    margin-left: 0.1rem;
-    &.active::before{
-      content: '|';
-      color: #843dff;
-      position: absolute;
-      left: -.35rem;
-      animation: keyUp 3s infinite ease-in-out;
-    }
-    &.Correct{
-      color:rgb(209 213 219);
-    }
-    &.Incorrect{
-      color:rgb(241, 11, 11);
-    }
 
-    &.active.is-last::before{
-      left: 112%;
-    }
-  }
-  x-word{
-    &.marked{
-      border-bottom: 1px solid rgb(241, 11, 11);
-    }
-    margin-left: .5rem;
-  }
-  @keyframes keyUp{
-    25% {
-      transform: scale(1.1);
-    }
-    50%{
-      transform: scale(1.3);
-    }
-    25% {
-      transform: scale(1.1);
-    }
-  }
-</style>
+<div class="mt-8 p-12 max-w-[1200px]">
+  <time id="time_initial"></time>    
+  <p class="text-gray-500 mt-4 text-4xl" id="parraf"></p>
+
+        <input autofocus class="opacity-0">
+        
+</div>
+<div id="endGame" class="bg-[#13151a] opacity-90 h-[100vh] w-[100vw] absolute top-0 left-0 right-0 bottom-0 hidden">
+  <div class="flex items-center justify-center h-[100vh] flex-col">
+    <h1 class="text-7xl text-blue-400 font-semibold">End Game</h1>
+    <p class="text-5xl  font-semibold" id="accuracyEnd"></p>
+    <p class="text-5xl  font-semibold" id="wpmEnd"></p>
+    <button class="hidden" id="restartGame"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
+  </div>
+</div>
 <script>
 
+let TEXT = ' ';
+const TIME = 50;
+let Time_Initial = TIME;
+let timeStart=false;
+let correctWords= 0;
+let totalWords=0;
+let accuracy=0;
+let wpm=0;
+let timeInterval;
 
   const $input = document.querySelector('input');
   const $parraf = document.querySelector('#parraf');
-  let TEXT = ' ';
-  
+  const $time_initial = document.querySelector('#time_initial')
+  function totalWordParraf(){
+    return $parraf.querySelectorAll('x-letter').length;
+  }
+  function totalWordCorrect(){
+    return $parraf.querySelectorAll('x-word.Correct').length;
+  }  
 fetch('https://dummyjson.com/posts')
   .then(response => response.json())
   .then(data => {
@@ -67,6 +49,7 @@ fetch('https://dummyjson.com/posts')
   initEvents();
   let words=[];
    function initGame(){ 
+        $input.value="";
     words = TEXT.split(' ').slice(0,32);
 
     $parraf.innerHTML = words.map((word, index)=>{
@@ -81,11 +64,27 @@ fetch('https://dummyjson.com/posts')
       `
     }).join('');
 
+    totalWords = totalWordParraf();
     const firstWord = $parraf.querySelector('x-word');
     firstWord.classList.add('active');  
     firstWord.querySelector('x-letter').classList.add('active');
-
   }
+  function uploadTime(){
+    if(!timeStart){
+    timeStart=true;
+    $time_initial.textContent=Time_Initial;
+    timeInterval= setInterval(() => {
+      if(Time_Initial > 0){
+      Time_Initial--;
+      $time_initial.textContent=Time_Initial;
+      }else{
+        endGame();
+        clearInterval(timeInterval);
+      }
+    }, 1000);
+  }
+}
+    document.addEventListener('keydown',  uploadTime);
   function initEvents(){
   document.addEventListener('keydown', ()=>{
     $input.focus()
@@ -93,16 +92,47 @@ fetch('https://dummyjson.com/posts')
   $input.addEventListener('keydown', onKeyDown);
   $input.addEventListener('keyup', onKeyUp);
   }
+  function endGame(){
+    $input.value="";
+    $input.disabled=true;
+    const btnRestart = document.querySelector('#restartGame')
+     const wpmEnd = document.querySelector('#wpmEnd');
+     const endGame = document.querySelector('#endGame');
 
+     const accuracyEnd = document.querySelector('#accuracyEnd');
+
+    btnRestart.classList.remove('hidden');
+    endGame.classList.remove('hidden');
+    btnRestart.disabled=false;
+    correctWords=totalWordCorrect();
+    accuracy = (correctWords / totalWords) * 100;
+    let timeElapsed = (TIME - Time_Initial) / 60;
+    wpm = (correctWords/timeElapsed);
+    wpmEnd.textContent =`WPM: ${wpm}`;
+    accuracyEnd.textContent =`Accuracy ${accuracy.toFixed(2)}%`;
+
+
+    btnRestart.addEventListener('click',(e)=>{
+      initGame();
+      $input.disabled=false;
+      Time_Initial = TIME;
+      $time_initial.textContent = Time_Initial;
+      timeStart=false;
+      endGame.classList.add('hidden');
+      btnRestart.classList.add('hidden');
+      btnRestart.disabled=true;
+    })
+  }
   function onKeyDown(e){
   const $currentWord = $parraf.querySelector('x-word.active');
-  const $currentLetter = $currentWord.querySelector('x-letter.active')
+  const $currentLetter = $currentWord.querySelector('x-letter.active');
+
   const { key } = e;
   if(key === ' '){
     e.preventDefault();
 
     const $nextWord = $currentWord.nextElementSibling
-    const $nextLetter = $nextWord.querySelector('x-letter')
+    const $nextLetter = $nextWord ? $nextWord.querySelector('x-letter') : null;
     $input.value='';
     $currentWord.classList.remove('active' , 'marked')
     $currentLetter.classList.remove('active')
@@ -113,6 +143,10 @@ fetch('https://dummyjson.com/posts')
     const LettersMissed = $currentWord.querySelectorAll('x-letter:not(.Correct)').length >0
 
     LettersMissed ? $currentWord.classList.add('marked') : $currentWord.classList.add('Correct');
+    if(!$nextWordas){
+      endGame();
+      clearInterval(timeInterval);
+    }
     }
      if(key === 'Backspace'){
       const $prevWord = $currentWord.previousElementSibling

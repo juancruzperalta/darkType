@@ -11,5 +11,7 @@ This project is a version on a write velocity, it is a made by Juan Cruz Peralta
 --VERSION 10-09-2024
 --Subida de git desde 0 sin API KEY.
 --
-Agregar tiempo
-Añadir resultado e información al terminar el texto o el tiempo.
+--Version 17-09-2024
+-Tiempo añadido.
+-Falta más para finalizar el juego.
+-Diseño e detalles al finalizar o perder el juego.
