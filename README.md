@@ -1,22 +1,29 @@
-Project in Astro with Tailwind.
+#DarkType
 
-This project is a version on a write velocity, it is a made by Juan Cruz Peralta.
+###Version: (Development) 17-09-2024
 
---DarkType.
----VERSION 06-09-2024
---Parte registro e login implementado al 100% conectado a la base de datos supabase.
---Registra y luego loguea.
---Loguea y aparece nombre de usuario en header.
---Gracias SUPABASE por la base de datos.
---VERSION 10-09-2024
---Subida de git desde 0 sin API KEY.
---
---Version 17-09-2024
--Tiempo añadido.
--Termina el juego e muestra tiempo y estadísticas.
+##**Juan Cruz Peralta**
 
---Por hacer-------------
--Falta diseño
--Falta subir datos que aparecen al terminar la jugada.
--Guarda en base de datos las estadísticas del jugador
--Mostrar una tabla con las estadisticas e top de jugadores.
+---
+
+##Implemented
+
+- **User Registration & Login**
+- **DataBase is used: Supabase for authentication and statics.**
+
+## Versions
+
+-**06-09-2024**
+Initial implemented is a user registration and login. -**10-09-2024**
+Project upload and connect with DB -**17-09-2024**
+Added game timer and end-game statistics.
+
+## Upcoming
+
+- Desing, UI/UX.
+- Database integration for game statistics.
+- Leaderboard.
+
+# Special Thanks
+
+## Supabase for proving the database.
