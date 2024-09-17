@@ -11,6 +11,9 @@
     <h1 class="text-7xl text-blue-400 font-semibold">End Game</h1>
     <p class="text-5xl  font-semibold" id="accuracyEnd"></p>
     <p class="text-5xl  font-semibold" id="wpmEnd"></p>
+    <p class="text-5xl  font-semibold" id="LetterErr"></p>
+    <p class="text-5xl  font-semibold" id="wordsCompleted"></p>
+        <p class="text-5xl  font-semibold" id="wordsIncompleted"></p>
     <button class="hidden" id="restartGame"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
   <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
   </div>
@@ -22,6 +25,9 @@ const TIME = 50;
 let Time_Initial = TIME;
 let timeStart=false;
 let correctWords= 0;
+let incorrectsWords=0;
+let incorrectLetters=0;
+let correctLetters=0;
 let totalWords=0;
 let accuracy=0;
 let wpm=0;
@@ -33,9 +39,18 @@ let timeInterval;
   function totalWordParraf(){
     return $parraf.querySelectorAll('x-letter').length;
   }
+  function totalLetterCorrect(){
+    return $parraf.querySelectorAll('x-letter.Correct').length;
+  }  
   function totalWordCorrect(){
     return $parraf.querySelectorAll('x-word.Correct').length;
-  }  
+  }
+    function totalWordIncorrect(){
+    return $parraf.querySelectorAll('x-word.marked').length;
+  }   
+  function totalLetterIncorrect(){
+    return $parraf.querySelectorAll('x-letter.Incorrect').length;
+  }    
 fetch('https://dummyjson.com/posts')
   .then(response => response.json())
   .then(data => {
@@ -51,7 +66,7 @@ fetch('https://dummyjson.com/posts')
    function initGame(){ 
         $input.value="";
     words = TEXT.split(' ').slice(0,32);
-
+  
     $parraf.innerHTML = words.map((word, index)=>{
       const letters = word.split('')
 
@@ -98,20 +113,28 @@ fetch('https://dummyjson.com/posts')
     const btnRestart = document.querySelector('#restartGame')
      const wpmEnd = document.querySelector('#wpmEnd');
      const endGame = document.querySelector('#endGame');
+     const letterErr = document.querySelector('#LetterErr');
+     const wordsCompleted = document.querySelector('#wordsCompleted');
+     const wordsIncompleted = document.querySelector('#wordsIncompleted');
 
      const accuracyEnd = document.querySelector('#accuracyEnd');
 
     btnRestart.classList.remove('hidden');
     endGame.classList.remove('hidden');
     btnRestart.disabled=false;
+    correctLetters = totalLetterCorrect();
+    incorrectLetters = totalLetterIncorrect();
     correctWords=totalWordCorrect();
-    accuracy = (correctWords / totalWords) * 100;
-    let timeElapsed = (TIME - Time_Initial) / 60;
-    wpm = (correctWords/timeElapsed);
-    wpmEnd.textContent =`WPM: ${wpm}`;
-    accuracyEnd.textContent =`Accuracy ${accuracy.toFixed(2)}%`;
-
-
+    incorrectsWords = totalWordIncorrect();
+    clearInterval(timeInterval);
+    accuracy = (correctLetters / totalWords) * 100;
+    let timeElapsed = (TIME - Time_Initial);
+    wpm = (correctLetters/timeElapsed);
+    wpmEnd.textContent =`WPM: ${wpm.toFixed(2)}`;
+    accuracyEnd.textContent =`Accuracy: ${accuracy.toFixed(2)}%`;
+    letterErr.textContent = `Letter Error: ${incorrectLetters}`
+    wordsCompleted.textContent = `Words Completed: ${correctWords}`;
+    wordsIncompleted.textContent = `Words Incompleted: ${incorrectsWords}`
     btnRestart.addEventListener('click',(e)=>{
       initGame();
       $input.disabled=false;
@@ -123,16 +146,17 @@ fetch('https://dummyjson.com/posts')
       btnRestart.disabled=true;
     })
   }
+    
   function onKeyDown(e){
   const $currentWord = $parraf.querySelector('x-word.active');
-  const $currentLetter = $currentWord.querySelector('x-letter.active');
-
+  const $currentLetter = $currentWord ? $currentWord.querySelector('x-letter.active') : null;
+  
   const { key } = e;
   if(key === ' '){
     e.preventDefault();
-
     const $nextWord = $currentWord.nextElementSibling
-    const $nextLetter = $nextWord ? $nextWord.querySelector('x-letter') : null;
+    const $nextLetter =$nextWord.querySelector('x-letter');
+
     $input.value='';
     $currentWord.classList.remove('active' , 'marked')
     $currentLetter.classList.remove('active')
@@ -143,11 +167,13 @@ fetch('https://dummyjson.com/posts')
     const LettersMissed = $currentWord.querySelectorAll('x-letter:not(.Correct)').length >0
 
     LettersMissed ? $currentWord.classList.add('marked') : $currentWord.classList.add('Correct');
-    if(!$nextWordas){
-      endGame();
-      clearInterval(timeInterval);
-    }
-    }
+    
+  }
+  if (!$currentWord.nextElementSibling && !$currentLetter.nextElementSibling) {
+    endGame();
+    return;
+  }
+
      if(key === 'Backspace'){
       const $prevWord = $currentWord.previousElementSibling
     const $prevLetter = $currentLetter.previousElementSibling
@@ -179,10 +205,8 @@ fetch('https://dummyjson.com/posts')
   const $currentLetter = $currentWord.querySelector('x-letter.active')
   const currentWord = $currentWord.innerText.trim();
   $input.maxLength = currentWord.length;
-
   const $allLetters = $currentWord.querySelectorAll('x-letter');
   $allLetters.forEach($letter => $letter.classList.remove('Correct', 'Incorrect'))
-
   $input.value.split('').forEach((char, index)=>{
     const $letter = $allLetters[index]
     const letterToCheck = currentWord[index]

@@ -13,5 +13,10 @@ This project is a version on a write velocity, it is a made by Juan Cruz Peralta
 --
 --Version 17-09-2024
 -Tiempo añadido.
--Falta más para finalizar el juego.
--Diseño e detalles al finalizar o perder el juego.
+-Termina el juego e muestra tiempo y estadísticas.
+
+--Por hacer-------------
+-Falta diseño
+-Falta subir datos que aparecen al terminar la jugada.
+-Guarda en base de datos las estadísticas del jugador
+-Mostrar una tabla con las estadisticas e top de jugadores.
