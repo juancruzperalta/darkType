@@ -13,11 +13,14 @@
 
 ## Versions
 
--**06-09-2024**
-Initial implemented is a user registration and login. -**10-09-2024**
-Project upload and connect with DB -**17-09-2024**
-Added game timer and end-game statistics. -**18-09-2024**
-Add Design UI/UX.
+- **06-09-2024**
+  Initial implemented is a user registration and login.
+- **10-09-2024**
+  Project upload and connect with DB
+- **17-09-2024**
+  Added game timer and end-game statistics.
+- **18-09-2024**
+  Add Design UI/UX.
 
 ## Upcoming
 
