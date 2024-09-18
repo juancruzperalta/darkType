@@ -6,17 +6,18 @@
         <input autofocus class="opacity-0">
         
 </div>
-<div id="endGame" class="bg-[#13151a] opacity-90 h-[100vh] w-[100vw] absolute top-0 left-0 right-0 bottom-0 hidden">
-  <div class="flex items-center justify-center h-[100vh] flex-col">
-    <h1 class="text-7xl text-blue-400 font-semibold">End Game</h1>
-    <p class="text-5xl  font-semibold" id="accuracyEnd"></p>
-    <p class="text-5xl  font-semibold" id="wpmEnd"></p>
-    <p class="text-5xl  font-semibold" id="LetterErr"></p>
-    <p class="text-5xl  font-semibold" id="wordsCompleted"></p>
-        <p class="text-5xl  font-semibold" id="wordsIncompleted"></p>
-    <button class="hidden" id="restartGame"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
-  </div>
+<div id="endGame" class=" hidden flex items-center justify-center flex-col">
+  <h1 class="text-[4.8rem] text-blue-400 font-semibold mb-4">End Game</h1>
+  <div class="grid grid-cols-2 w-[100%] items-center justify-center text-center gap-2">
+    <span class="text-5xl  font-semibold" id="accuracyEnd"></span>
+    <span class="text-5xl  font-semibold" id="wordsCompleted"></span>
+    <span class="text-5xl  font-semibold" id="wpmEnd"></span>
+    <span class="text-5xl  font-semibold" id="wordsIncompleted"></span>
+     <span class="text-5xl  font-semibold" id="timeTranscurred"></span>   
+    <span class="text-5xl  font-semibold" id="LetterErr"></span>
+      </div>
+      <button class="hidden mt-4" id="restartGame"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-red-400 w-14 h-14">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
 </div>
 <script>
 
@@ -64,6 +65,8 @@ fetch('https://dummyjson.com/posts')
   initEvents();
   let words=[];
    function initGame(){ 
+     $parraf.classList.remove('hidden');
+     $time_initial.classList.remove('hidden');
         $input.value="";
     words = TEXT.split(' ').slice(0,32);
   
@@ -116,11 +119,14 @@ fetch('https://dummyjson.com/posts')
      const letterErr = document.querySelector('#LetterErr');
      const wordsCompleted = document.querySelector('#wordsCompleted');
      const wordsIncompleted = document.querySelector('#wordsIncompleted');
+     const timeTranscurred = document.querySelector('#timeTranscurred');
 
      const accuracyEnd = document.querySelector('#accuracyEnd');
 
     btnRestart.classList.remove('hidden');
     endGame.classList.remove('hidden');
+    $parraf.classList.add('hidden');
+    $time_initial.classList.add('hidden');
     btnRestart.disabled=false;
     correctLetters = totalLetterCorrect();
     incorrectLetters = totalLetterIncorrect();
@@ -131,6 +137,7 @@ fetch('https://dummyjson.com/posts')
     let timeElapsed = (TIME - Time_Initial);
     wpm = (correctLetters/timeElapsed);
     wpmEnd.textContent =`WPM: ${wpm.toFixed(2)}`;
+    timeTranscurred.textContent = `Time Transcurred: ${timeElapsed}s`
     accuracyEnd.textContent =`Accuracy: ${accuracy.toFixed(2)}%`;
     letterErr.textContent = `Letter Error: ${incorrectLetters}`
     wordsCompleted.textContent = `Words Completed: ${correctWords}`;

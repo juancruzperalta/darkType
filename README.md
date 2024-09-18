@@ -1,8 +1,8 @@
-#DarkType
+# DarkType
 
-###Version: (Development) 17-09-2024
+### Version: (Development) 17-09-2024
 
-##**Juan Cruz Peralta**
+**Juan Cruz Peralta**
 
 ---
 
@@ -16,11 +16,11 @@
 -**06-09-2024**
 Initial implemented is a user registration and login. -**10-09-2024**
 Project upload and connect with DB -**17-09-2024**
-Added game timer and end-game statistics.
+Added game timer and end-game statistics. -**18-09-2024**
+Add Design UI/UX.
 
 ## Upcoming
 
-- Desing, UI/UX.
 - Database integration for game statistics.
 - Leaderboard.
 
