@@ -175,18 +175,23 @@ fetch('https://dummyjson.com/posts')
   }
   async function updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue){
     const { data: { user } } = await supabase.auth.getUser();
-    const userId = user.id;
-     const { data: existingRecord, error: fetchError } = await supabase
-    .from('score')
-    .select('wpm, accuracy, wordsCompleted')
-    .eq('id', userId)
-    .single();
-    if (existingRecord) {
-        await updateScoreInTheDB(wpmValue, existingRecord.wpm, accuracyValue, existingRecord.accuracy, correctWordsValue, existingRecord.wordsCompleted, userId);
-    }else{
-      await insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user);
-    }
-  }
+const { data: existingRecord, error: fetchError } = await supabase
+  .from('score')
+  .select('*')
+  .eq('id', user.id)
+  .maybeSingle();  // Esto no lanzará un error si no hay registros
+
+if (fetchError) {
+  console.error("Error fetching record:", fetchError);
+  return;
+}
+
+if (existingRecord) {
+  updateScoreInTheDB(wpmValue, existingRecord.wpm, accuracyValue, existingRecord.accuracy, correctWordsValue, existingRecord.wordsCompleted, user.id)
+}else{
+  insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user);
+}
+}
   async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, correctWordsValue, currentWordsCompleted, userId){
    const { data, error } = await supabase
       .from('score')
@@ -201,16 +206,12 @@ fetch('https://dummyjson.com/posts')
       console.log(error);
   }
   async function insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user){
-
       const username = user.user_metadata.username;
     if (isNaN(wpmValue) || isNaN(accuracyValue) || isNaN(correctWordsValue)) {
         console.error('Error: Uno o más valores no son números válidos.', { wpmValue, accuracyValue, correctWordsValue });
         return;
       }
-      else{
-          const { data, error } = await supabase
-          .from('SCORE')
-        .insert([
+    const { data, error } = await supabase.from('score').insert([
           {
             id: user.id,
             user_name: username,
@@ -221,10 +222,7 @@ fetch('https://dummyjson.com/posts')
           }
         ]);
 
-        console.log(data);
-        console.log(error);
 
-    }
   }
     // Donde apreta algún tipo de tecla hace el juego comprueba que apretó, y cuál era la tecla, y así va hasta el final, dónde la última tira el ENDGAME.
   function onKeyDown(e){
