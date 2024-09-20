@@ -20,23 +20,24 @@
     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
 </div>
 <script>
-
-let TEXT = ' ';
-const TIME = 50;
-let Time_Initial = TIME;
-let timeStart=false;
-let correctWords= 0;
-let incorrectsWords=0;
-let incorrectLetters=0;
-let correctLetters=0;
-let totalWords=0;
-let accuracy=0;
-let wpm=0;
-let timeInterval;
+import { supabase } from "../supabaseClient";
 
   const $input = document.querySelector('input');
   const $parraf = document.querySelector('#parraf');
   const $time_initial = document.querySelector('#time_initial')
+  const TIME = 50;
+  let TEXT = ' ',
+  Time_Initial = TIME,
+  timeStart=false,
+  correctWords= 0,
+  incorrectsWords=0,
+  incorrectLetters=0,
+  correctLetters=0,
+  totalWords=0,
+  accuracy=0,
+  wpm=0,
+  timeInterval;
+
   function totalWordParraf(){
     return $parraf.querySelectorAll('x-letter').length;
   }
@@ -64,6 +65,7 @@ fetch('https://dummyjson.com/posts')
   });
   initEvents();
   let words=[];
+  // Iniciamos todo el juego
    function initGame(){ 
      $parraf.classList.remove('hidden');
      $time_initial.classList.remove('hidden');
@@ -87,6 +89,7 @@ fetch('https://dummyjson.com/posts')
     firstWord.classList.add('active');  
     firstWord.querySelector('x-letter').classList.add('active');
   }
+  // Actualizamos el tiempo de juego
   function uploadTime(){
     if(!timeStart){
     timeStart=true;
@@ -102,7 +105,9 @@ fetch('https://dummyjson.com/posts')
     }, 1000);
   }
 }
+// Lo hacemos siempre que se aprete una tecla, el juego arranca.
     document.addEventListener('keydown',  uploadTime);
+// Iniciamos los eventos.  
   function initEvents(){
   document.addEventListener('keydown', ()=>{
     $input.focus()
@@ -110,38 +115,53 @@ fetch('https://dummyjson.com/posts')
   $input.addEventListener('keydown', onKeyDown);
   $input.addEventListener('keyup', onKeyUp);
   }
-  function endGame(){
-    $input.value="";
-    $input.disabled=true;
-    const btnRestart = document.querySelector('#restartGame')
-     const wpmEnd = document.querySelector('#wpmEnd');
-     const endGame = document.querySelector('#endGame');
-     const letterErr = document.querySelector('#LetterErr');
-     const wordsCompleted = document.querySelector('#wordsCompleted');
-     const wordsIncompleted = document.querySelector('#wordsIncompleted');
-     const timeTranscurred = document.querySelector('#timeTranscurred');
+  // Función al terminar el juego, muestra resultados etc.
+  async function endGame(){
+    // Selectors
+    const btnRestart = document.querySelector('#restartGame'),
+     wpmEnd = document.querySelector('#wpmEnd'),
+     endGame = document.querySelector('#endGame'),
+     letterErr = document.querySelector('#LetterErr'),
+     wordsCompleted = document.querySelector('#wordsCompleted'),
+     wordsIncompleted = document.querySelector('#wordsIncompleted'),
+     timeTranscurred = document.querySelector('#timeTranscurred'),
+     accuracyEnd = document.querySelector('#accuracyEnd');
+    // onEndGame
+      btnRestart.disabled=false;
+      clearInterval(timeInterval);
+      $input.value="";
+      $input.disabled=true;
+    // Count..
+      correctLetters = totalLetterCorrect();
+      incorrectLetters = totalLetterIncorrect();
+      correctWords=totalWordCorrect();
+      incorrectsWords = totalWordIncorrect();
 
-     const accuracyEnd = document.querySelector('#accuracyEnd');
-
-    btnRestart.classList.remove('hidden');
-    endGame.classList.remove('hidden');
+    // Class remove
+      btnRestart.classList.remove('hidden');
+      endGame.classList.remove('hidden');
+    // Class add
     $parraf.classList.add('hidden');
     $time_initial.classList.add('hidden');
-    btnRestart.disabled=false;
-    correctLetters = totalLetterCorrect();
-    incorrectLetters = totalLetterIncorrect();
-    correctWords=totalWordCorrect();
-    incorrectsWords = totalWordIncorrect();
-    clearInterval(timeInterval);
+
+    //Calculs
     accuracy = (correctLetters / totalWords) * 100;
     let timeElapsed = (TIME - Time_Initial);
     wpm = (correctLetters/timeElapsed);
-    wpmEnd.textContent =`WPM: ${wpm.toFixed(2)}`;
+       const wpmValue = parseFloat(wpm).toFixed(2);
+    const accuracyValue = parseFloat(accuracy).toFixed(2);
+    const correctWordsValue = parseFloat(correctWords);
+    // TextContent
+    wpmEnd.textContent =`WPM: ${wpmValue}`;
     timeTranscurred.textContent = `Time Transcurred: ${timeElapsed}s`
-    accuracyEnd.textContent =`Accuracy: ${accuracy.toFixed(2)}%`;
+    accuracyEnd.textContent =`Accuracy: ${accuracyValue}%`;
     letterErr.textContent = `Letter Error: ${incorrectLetters}`
-    wordsCompleted.textContent = `Words Completed: ${correctWords}`;
+    wordsCompleted.textContent = `Words Completed: ${correctWordsValue}`;
     wordsIncompleted.textContent = `Words Incompleted: ${incorrectsWords}`
+    
+    await updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue);
+      // OnBTNRestart.
+
     btnRestart.addEventListener('click',(e)=>{
       initGame();
       $input.disabled=false;
@@ -153,7 +173,60 @@ fetch('https://dummyjson.com/posts')
       btnRestart.disabled=true;
     })
   }
-    
+  async function updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue){
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user.id;
+     const { data: existingRecord, error: fetchError } = await supabase
+    .from('score')
+    .select('wpm, accuracy, wordsCompleted')
+    .eq('id', userId)
+    .single();
+    if (existingRecord) {
+        await updateScoreInTheDB(wpmValue, existingRecord.wpm, accuracyValue, existingRecord.accuracy, correctWordsValue, existingRecord.wordsCompleted, userId);
+    }else{
+      await insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user);
+    }
+  }
+  async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, correctWordsValue, currentWordsCompleted, userId){
+   const { data, error } = await supabase
+      .from('score')
+      .update({
+        wpm: Math.max(wpmValue, currentWpm),
+        accuracy: Math.max(accuracyValue, currentAccuracy),
+        wordsCompleted: Math.max(correctWordsValue, currentWordsCompleted)
+      })
+      .eq('id', userId);
+
+      console.log(data);
+      console.log(error);
+  }
+  async function insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user){
+
+      const username = user.user_metadata.username;
+    if (isNaN(wpmValue) || isNaN(accuracyValue) || isNaN(correctWordsValue)) {
+        console.error('Error: Uno o más valores no son números válidos.', { wpmValue, accuracyValue, correctWordsValue });
+        return;
+      }
+      else{
+          const { data, error } = await supabase
+          .from('SCORE')
+        .insert([
+          {
+            id: user.id,
+            user_name: username,
+            wpm: wpmValue,
+            accuracy: accuracyValue,
+            wordsCompleted: correctWordsValue,
+
+          }
+        ]);
+
+        console.log(data);
+        console.log(error);
+
+    }
+  }
+    // Donde apreta algún tipo de tecla hace el juego comprueba que apretó, y cuál era la tecla, y así va hasta el final, dónde la última tira el ENDGAME.
   function onKeyDown(e){
   const $currentWord = $parraf.querySelector('x-word.active');
   const $currentLetter = $currentWord ? $currentWord.querySelector('x-letter.active') : null;
@@ -161,16 +234,14 @@ fetch('https://dummyjson.com/posts')
   const { key } = e;
   if(key === ' '){
     e.preventDefault();
-    const $nextWord = $currentWord.nextElementSibling
+    const $nextWord = $currentWord.nextElementSibling;
     const $nextLetter =$nextWord.querySelector('x-letter');
 
     $input.value='';
     $currentWord.classList.remove('active' , 'marked')
     $currentLetter.classList.remove('active')
-
     $nextWord.classList.add('active')
     $nextLetter.classList.add('active')
-
     const LettersMissed = $currentWord.querySelectorAll('x-letter:not(.Correct)').length >0
 
     LettersMissed ? $currentWord.classList.add('marked') : $currentWord.classList.add('Correct');

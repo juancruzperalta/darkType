@@ -21,10 +21,12 @@
   Added game timer and end-game statistics.
 - **18-09-2024**
   Add Design UI/UX.
+- **20-09-2024**
+  Database integration for game statistics.
 
 ## Upcoming
 
-- Database integration for game statistics.
+- Add Up statistics or insert statistics. (If this user already had statistics, they are updated with the best score).
 - Leaderboard.
 
 # Special Thanks
