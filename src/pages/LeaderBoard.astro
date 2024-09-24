@@ -1,0 +1,68 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
+
+---
+
+
+<Layout title="LeaderBoard | DarkType">
+  <div class="wrapper">
+      <Header/>
+    <main>
+      <div class="mt-8 flex items-center flex-col">
+        <h1 class="text-5xl font-semibold">LeaderBoard</h1>
+      <div class="grid grid-cols-5 flex-row mt-8 mb-4 shadow-lg shadow-black   bg-[#242830] font-semibold text-2xl text-center w-[100%] list-none p-4 rounded-sm">
+        <ul id="topNumber">#</ul>
+        <ul id="topName">Name</ul>
+        <ul id="topWPM">WPM</ul>
+        <ul id="topAccuracy">Accuracy</ul>
+        <ul id="topWordsCompleted">Words Completed</ul>
+    </div>
+    </main>
+  <Footer/>
+</Layout>
+<script>
+import { supabase } from "../supabaseClient";
+  const topNumber = document.querySelector('#topNumber'),
+  topName =   document.querySelector('#topName'),
+  topWpm =  document.querySelector('#topWPM'),
+  topAccuracy = document.querySelector('#topAccuracy'),
+  topWordsCompleted = document.querySelector('#topWordsCompleted');
+
+  const { data, error } = await supabase
+  .from('score')
+  .select('*')
+  .order('wpm', { ascending: false })
+  .limit(10);
+  
+  for(let i=0; i<data.length; i++){
+    const liTopNumber = document.createElement('li');
+    const liTopName = document.createElement('li');
+    const liTopWpm = document.createElement('li');
+    const liTopAccuracy = document.createElement('li');
+    const liTopWordsCompleted = document.createElement('li');
+   
+    liTopNumber.classList.add('topEdit');
+    liTopName.classList.add('topEdit');
+    liTopWpm.classList.add('topEdit');
+    liTopAccuracy.classList.add('topEdit');
+    liTopWordsCompleted.classList.add('topEdit');
+
+    liTopNumber.innerHTML = '';
+    liTopName.innerHTML = '';
+    liTopWpm.innerHTML = '';
+    liTopAccuracy.innerHTML = '';
+    liTopWordsCompleted.innerHTML = '';
+    liTopNumber.textContent = i+1;
+    topNumber.appendChild(liTopNumber);
+    liTopName.textContent = data[i].user_name;
+    topName.appendChild(liTopName);
+    liTopWpm.textContent = data[i].wpm;
+    topWpm.appendChild(liTopWpm);
+    liTopAccuracy.textContent =  `${data[i].accuracy} %`;
+    topAccuracy.appendChild(liTopAccuracy);
+    liTopWordsCompleted.textContent = data[i].wordsCompleted;
+    topWordsCompleted.appendChild(liTopWordsCompleted);
+  }
+</script>

@@ -1,7 +1,7 @@
 
-<div class="mt-8 p-12 max-w-[1200px]">
+<div class="mt-8 p-4 max-w-[1200px]">
   <time id="time_initial"></time>    
-  <p class="text-gray-500 mt-4 text-4xl" id="parraf"></p>
+  <p class="text-gray-500 mt-4 text-[2.5rem]" id="parraf"></p>
 
         <input autofocus class="opacity-0">
         
@@ -158,10 +158,10 @@ fetch('https://dummyjson.com/posts')
     letterErr.textContent = `Letter Error: ${incorrectLetters}`
     wordsCompleted.textContent = `Words Completed: ${correctWordsValue}`;
     wordsIncompleted.textContent = `Words Incompleted: ${incorrectsWords}`
-    
-    await updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue);
-      // OnBTNRestart.
-
+    const { data: { user } } = await supabase.auth.getUser();
+    if(user){
+      await updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue);
+    }
     btnRestart.addEventListener('click',(e)=>{
       initGame();
       $input.disabled=false;
@@ -191,6 +191,7 @@ if (existingRecord) {
 }else{
   insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user);
 }
+
 }
   async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, correctWordsValue, currentWordsCompleted, userId){
    const { data, error } = await supabase
