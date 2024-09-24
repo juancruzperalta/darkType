@@ -160,7 +160,7 @@ fetch('https://dummyjson.com/posts')
     wordsIncompleted.textContent = `Words Incompleted: ${incorrectsWords}`
     const { data: { user } } = await supabase.auth.getUser();
     if(user){
-      await updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue);
+      await updateOrInsertInTheDB(wpmValue, accuracyValue);
     }
     btnRestart.addEventListener('click',(e)=>{
       initGame();
@@ -173,7 +173,7 @@ fetch('https://dummyjson.com/posts')
       btnRestart.disabled=true;
     })
   }
-  async function updateOrInsertInTheDB(wpmValue, accuracyValue, correctWordsValue){
+  async function updateOrInsertInTheDB(wpmValue, accuracyValue){
     const { data: { user } } = await supabase.auth.getUser();
 const { data: existingRecord, error: fetchError } = await supabase
   .from('score')
@@ -185,31 +185,32 @@ if (fetchError) {
   console.error("Error fetching record:", fetchError);
   return;
 }
-
-if (existingRecord) {
-  updateScoreInTheDB(wpmValue, existingRecord.wpm, accuracyValue, existingRecord.accuracy, correctWordsValue, existingRecord.wordsCompleted, user.id)
+  let dateNow = Date.now();
+  const dateValue = new Date(dateNow); // Convertir a una fecha
+  if (existingRecord) {
+  updateScoreInTheDB(wpmValue, existingRecord.wpm, accuracyValue, existingRecord.accuracy,dateValue, user.id)
 }else{
-  insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user);
+  insertScoreInTheDB(wpmValue, accuracyValue, dateValue, user);
 }
 
 }
-  async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, correctWordsValue, currentWordsCompleted, userId){
+  async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, dateValue, userId){
    const { data, error } = await supabase
       .from('score')
       .update({
         wpm: Math.max(wpmValue, currentWpm),
         accuracy: Math.max(accuracyValue, currentAccuracy),
-        wordsCompleted: Math.max(correctWordsValue, currentWordsCompleted)
+        date: dateValue,
       })
       .eq('id', userId);
 
       console.log(data);
       console.log(error);
   }
-  async function insertScoreInTheDB(wpmValue, accuracyValue, correctWordsValue, user){
+  async function insertScoreInTheDB(wpmValue, accuracyValue,dateValue, user){
       const username = user.user_metadata.username;
-    if (isNaN(wpmValue) || isNaN(accuracyValue) || isNaN(correctWordsValue)) {
-        console.error('Error: Uno o más valores no son números válidos.', { wpmValue, accuracyValue, correctWordsValue });
+    if (isNaN(wpmValue) || isNaN(accuracyValue)) {
+        console.error('Error: Uno o más valores no son números válidos.', { wpmValue, accuracyValue});
         return;
       }
     const { data, error } = await supabase.from('score').insert([
@@ -218,8 +219,7 @@ if (existingRecord) {
             user_name: username,
             wpm: wpmValue,
             accuracy: accuracyValue,
-            wordsCompleted: correctWordsValue,
-
+            date: dateValue,
           }
         ]);
 

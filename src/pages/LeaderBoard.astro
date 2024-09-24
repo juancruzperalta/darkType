@@ -17,7 +17,7 @@ import Layout from "../layouts/Layout.astro";
         <ul id="topName">Name</ul>
         <ul id="topWPM">WPM</ul>
         <ul id="topAccuracy">Accuracy</ul>
-        <ul id="topWordsCompleted">Words Completed</ul>
+        <ul id="topDate">Date</ul>
     </div>
     </main>
   <Footer/>
@@ -28,7 +28,7 @@ import { supabase } from "../supabaseClient";
   topName =   document.querySelector('#topName'),
   topWpm =  document.querySelector('#topWPM'),
   topAccuracy = document.querySelector('#topAccuracy'),
-  topWordsCompleted = document.querySelector('#topWordsCompleted');
+  topDate = document.querySelector('#topDate');
 
   const { data, error } = await supabase
   .from('score')
@@ -41,19 +41,18 @@ import { supabase } from "../supabaseClient";
     const liTopName = document.createElement('li');
     const liTopWpm = document.createElement('li');
     const liTopAccuracy = document.createElement('li');
-    const liTopWordsCompleted = document.createElement('li');
-   
+    const liTopDate = document.createElement('li');
     liTopNumber.classList.add('topEdit');
     liTopName.classList.add('topEdit');
     liTopWpm.classList.add('topEdit');
     liTopAccuracy.classList.add('topEdit');
-    liTopWordsCompleted.classList.add('topEdit');
+    liTopDate.classList.add('topEdit');
 
     liTopNumber.innerHTML = '';
     liTopName.innerHTML = '';
     liTopWpm.innerHTML = '';
     liTopAccuracy.innerHTML = '';
-    liTopWordsCompleted.innerHTML = '';
+    liTopDate.innerHTML = '';
     liTopNumber.textContent = i+1;
     topNumber.appendChild(liTopNumber);
     liTopName.textContent = data[i].user_name;
@@ -62,7 +61,7 @@ import { supabase } from "../supabaseClient";
     topWpm.appendChild(liTopWpm);
     liTopAccuracy.textContent =  `${data[i].accuracy} %`;
     topAccuracy.appendChild(liTopAccuracy);
-    liTopWordsCompleted.textContent = data[i].wordsCompleted;
-    topWordsCompleted.appendChild(liTopWordsCompleted);
+    liTopDate.textContent = data[i].date;
+    topDate.appendChild(liTopDate);
   }
 </script>
