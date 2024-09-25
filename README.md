@@ -28,12 +28,15 @@
   - Desing UI/UX LeaderBoard ✔
   - LeaderBoard ✔
   - Add date to LeaderBoard
+- **25-09-2024**
+  - Accesibility easy for user. ✔
+  - Show the user to approve the email. ✔
 
 ## Upcoming
 
-- Show the user to approve the email
+- App SUN/MOON
+- App English or Spanish (Select).
 - Design UI/UX more, more, more...
-- Accesibility easy for user.
 - Testing the app and post in the host for community.
 
 # Special Thanks

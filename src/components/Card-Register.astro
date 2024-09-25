@@ -1,4 +1,4 @@
-<div class="flex flex-row h-[600px] items-center justify-center rounded-md ">
+<div class="flex flex-row h-[600px] items-center justify-center rounded-md relative">
     <form id="formLogin" class="flex flex-col gap-4 w-[480px] mt-8 p-8">
     <div class="font-bold text-3xl flex gap-1"><svg class="w-7 h-7 fill-gray-200"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l362.8 0c-5.4-9.4-8.6-20.3-8.6-32l0-128c0-2.1 .1-4.2 .3-6.3c-31-26-71-41.7-114.6-41.7l-91.4 0zM528 240c17.7 0 32 14.3 32 32l0 48-64 0 0-48c0-17.7 14.3-32 32-32zm-80 32l0 48c-17.7 0-32 14.3-32 32l0 128c0 17.7 14.3 32 32 32l160 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32l0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80z"/></svg>
       <span>
@@ -55,7 +55,6 @@
       <button type="submit" id="submitRegister" class="bg-[#2c0076] text-gray-200 text-xl font-bold  p-4 rounded-md border-none disabled:opacity-90">Sign Up</button>
       <div class="hidden p-4 bg-red-500 rounded-md" id="messageError"></div>
     </form>
-
 </div>
 
 <script>
@@ -90,12 +89,16 @@ async function registerUser(userName, email, password) {
 );
 
   if(userName.length > 10){
-    messageErrorFunc("El username no debe pasar los 10 carácteres");
+    messageErrorFunc("The username must be less than 10 characters");
   }
-  if (error) {
-    return { error: error.message };
+   if (error) {
+    messageErrorFunc(`Error to register the user: ${error.message}`);
   }
-  return { data };
+   if (data) {
+        messageErrorFunc(`You should approve the email ${email}`);
+    }
+
+  return { data, error }; 
 }
 const messageLoginFunc = (msg) => {
   messageLogin.classList.remove('hidden');
@@ -115,23 +118,17 @@ formRegister.addEventListener('submit', async (e) => {
   const verifyEmail = document.getElementById('verifyEmail').value;
   const password = document.getElementById('passwordRegister').value;
   const verifyPassword = document.getElementById('verifyPassword').value;
-
   if (email !== verifyEmail || password !== verifyPassword) {
-    messageErrorFunc("Emails o contraseñas no coinciden");
+    messageErrorFunc("Emails or password don't match");
     return;
   }
 
   if (email === '' || verifyEmail === '' || password === '' || verifyPassword === '' || userName === ' ') {
-    messageErrorFunc("Debes completar todos los campos");
+    messageErrorFunc("You must enter all fields");
     return;
   }
 
   const response = await registerUser(userName, email, password);
-  if (response.error) {
-    messageErrorFunc(`Error: ${response.error}`);
-  } else {
-    messageErrorFunc("Usuario registrado correctamente");
-  }
   formRegister.reset();
   }
 });
@@ -141,7 +138,7 @@ async function loginUser(email, password) {
   password: password,
 });
   if(error){
-    messageLoginFunc("Error al iniciar sesión");
+    messageLoginFunc("Error to LoggedIn");
   }
   const {data:{user}} = await supabase.auth.getUser();
     localStorage.setItem('userName', user.user_metadata.username);
@@ -156,16 +153,16 @@ formLogin.addEventListener('submit', async (e) => {
   const password = document.getElementById('LoginPassword').value;
   // Validar que ambos campos tengan contenido
   if (!email || !password) {
-    messageLoginFunc('Debes ingresar ambos campos.');
+    messageLoginFunc('You must enter two fields');
     return;
   }
 
   // Llamar a la función de login
   const response = await loginUser(email, password);
   if (response.error) {
-    messageLoginFunc('Credenciales incorrectas');
+    messageLoginFunc('Error in credentials');
   } else {
-    messageLoginFunc('Login exitoso');
+    messageLoginFunc('Successful loggedIn');
     setTimeout(() => {
       
       location.reload();

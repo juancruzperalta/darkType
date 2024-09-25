@@ -39,9 +39,9 @@ async function logoutUser() {
   let { error } = await supabase.auth.signOut();
   
   if (error) {
-    console.log(`Error al cerrar sesión: ${error.message}`);
+    console.log(`Error to loggedIn: ${error.message}`);
   } else {
-    console.log("Sesión cerrada correctamente");
+    console.log("Session is closed correctly");
     localStorage.clear();
   }
   location.reload();
