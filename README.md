@@ -31,13 +31,13 @@
 - **25-09-2024**
   - Accesibility easy for user. ✔
   - Show the user to approve the email. ✔
+  - Design UI/UX for phone, tablet and computer. ✔
+- **30-09-2024**
+  - Testing the app ✔
 
 ## Upcoming
 
-- App SUN/MOON
-- App English or Spanish (Select).
-- Design UI/UX more, more, more...
-- Testing the app and post in the host for community.
+- Post in the host for community.
 
 # Special Thanks
 
