@@ -34,6 +34,8 @@
   - Design UI/UX for phone, tablet and computer. ✔
 - **30-09-2024**
   - Testing the app ✔
+- **01-10-2024**
+  - Upload to hosting...
 
 ## Upcoming
 
