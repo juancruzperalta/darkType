@@ -24,6 +24,9 @@ const { title } = Astro.props;
   :root{
     --text-color:rgb(224, 222, 222);
   }
+* {
+    box-sizing: border-box;
+}
 	html {
 		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 		background: #13151a;
@@ -102,9 +105,9 @@ body{
   }
 
 
-  @media (min-width: 601px) and (max-width: 1024px) {
+  @media (min-width: 1024px) {
     .wrapper{
-      max-width: 1000px;
+      max-width: 1200px;
     }
     .topEdit{
         font-size: 1.1rem;

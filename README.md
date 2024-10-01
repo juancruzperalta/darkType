@@ -38,6 +38,10 @@
   - Upload to hosting ✔
   - Testing the host ✔
 
+## Upcoming
+
+- In phone practice too.
+
 ---
 
 # Special Thanks
