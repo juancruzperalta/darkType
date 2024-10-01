@@ -35,11 +35,10 @@
 - **30-09-2024**
   - Testing the app ✔
 - **01-10-2024**
-  - Upload to hosting...
+  - Upload to hosting ✔
+  - Testing the host ✔
 
-## Upcoming
-
-- Post in the host for community.
+---
 
 # Special Thanks
 
