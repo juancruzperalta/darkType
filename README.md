@@ -42,6 +42,11 @@
 
 ---
 
+# Testing problems
+
+- Bug in using in phone...
+- I resolve...
+
 # Special Thanks
 
 ## Supabase for proving the database.
