@@ -37,10 +37,8 @@
 - **01-10-2024**
   - Upload to hosting ✔
   - Testing the host ✔
-
-## Upcoming
-
-- In phone practice too.
+- **03-10-2024**
+  - In phone practice too ✔
 
 ---
 

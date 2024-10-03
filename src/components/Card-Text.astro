@@ -313,4 +313,16 @@ if (fetchError) {
     $currentLetter.classList.add('active', 'is-last')
   }
 }
+
+//checked this screen size, on phone input focus active now.
+
+function checkScreenSize() {
+  if (window.innerWidth <= 768) {
+    $input.focus();
+  }
+}
+
+window.addEventListener('resize', checkScreenSize);
+
+checkScreenSize();
 </script>
