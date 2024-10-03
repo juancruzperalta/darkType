@@ -3,7 +3,7 @@
   <time id="time_initial" class="text-xl"></time>    
   <p class="text-gray-500 mt-4 text-xl lg:text-4xl md:text-3xl sm:text-2xl " id="parraf"></p>
 
-        <input autofocus class="opacity-0">
+        <input autofocus class="opacity-0" id="inputText">
         
 </div>
 <div id="endGame" class=" hidden flex items-center justify-center flex-col">
@@ -38,7 +38,7 @@ const parrafDiv = document.querySelector('#parrafDiv');
   accuracy=0,
   wpm=0,
   timeInterval;
-
+$input.focus();
   function totalWordParraf(){
     return $parraf.querySelectorAll('x-letter').length;
   }
@@ -314,15 +314,4 @@ if (fetchError) {
   }
 }
 
-//checked this screen size, on phone input focus active now.
-
-function checkScreenSize() {
-  if (window.innerWidth <= 768) {
-    $input.focus();
-  }
-}
-
-window.addEventListener('resize', checkScreenSize);
-
-checkScreenSize();
 </script>
