@@ -115,6 +115,8 @@ fetch('https://dummyjson.com/posts')
     $input.focus()
   })
   $input.addEventListener('keydown', onKeyDown);
+  $input.addEventListener('input', onInput);
+  
   $input.addEventListener('keyup', onKeyUp);
   }
   // Función al terminar el juego, muestra resultados etc.
@@ -236,6 +238,16 @@ if (fetchError) {
 
   }
     // Donde apreta algún tipo de tecla hace el juego comprueba que apretó, y cuál era la tecla, y así va hasta el final, dónde la última tira el ENDGAME.
+    function onInput(e) {
+  const { value } = e.target;
+  
+  // Detectamos si el último carácter es un espacio
+  if (value.endsWith(' ')) {
+    // Simulamos un evento de keydown con la tecla espacio
+    onKeyDown({ key: ' ', preventDefault: () => {} });
+  }
+}
+
   function onKeyDown(e){
   const $currentWord = $parraf.querySelector('x-word.active');
   const $currentLetter = $currentWord ? $currentWord.querySelector('x-letter.active') : null;
