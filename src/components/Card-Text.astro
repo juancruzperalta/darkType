@@ -1,20 +1,20 @@
 
 <div class="p-4 w-[100%]" id="parrafDiv"> 
-  <time id="time_initial" class="text-xl"></time>    
-  <p class="text-gray-500 mt-4 text-xl lg:text-4xl md:text-3xl sm:text-2xl " id="parraf"></p>
+  <time id="time_initial" class="text-xl 2xl:text-2xl"></time>    
+  <p class="text-gray-500 mt-4 text-xl md:text-3xl sm:text-2xl 2xl:text-5xl" id="parraf"></p>
 
-        <input autofocus class="md:opacity-0 opacity-85 text-black" id="inputText">
+        <input autofocus class="opacity-0" id="inputText">
         
 </div>
 <div id="endGame" class=" hidden flex items-center justify-center flex-col">
   <h1 class="text-[2rem] md:text-[3rem] lg:text-[4rem] text-blue-400 font-semibold mb-4">End Game</h1>
   <div class="grid grid-cols-2 w-[100%] items-center justify-center text-center gap-2">
-    <span class="lg:text-5xl  md:text-3xl text-xl font-semibold" id="accuracyEnd"></span>
-    <span class="lg:text-5xl  md:text-3xl text-xl font-semibold" id="wordsCompleted"></span>
-    <span class="lg:text-5xl  md:text-3xl text-xl font-semibold" id="wpmEnd"></span>
-    <span class="lg:text-5xl  md:text-3xl text-xl font-semibold" id="wordsIncompleted"></span>
-     <span class="lg:text-5xl md:text-3xl text-xl  font-semibold" id="timeTranscurred"></span>   
-    <span class="lg:text-5xl  md:text-3xl text-xl font-semibold" id="LetterErr"></span>
+    <span class="2xl:text-5xl  md:text-3xl text-xl font-semibold" id="accuracyEnd"></span>
+    <span class="2xl:text-5xl  md:text-3xl text-xl font-semibold" id="wordsCompleted"></span>
+    <span class="2xl:text-5xl  md:text-3xl text-xl font-semibold" id="wpmEnd"></span>
+    <span class="2xl:text-5xl  md:text-3xl text-xl font-semibold" id="wordsIncompleted"></span>
+     <span class="2xl:text-5xl md:text-3xl text-xl  font-semibold" id="timeTranscurred"></span>   
+    <span class="2xl:text-5xl  md:text-3xl text-xl font-semibold" id="LetterErr"></span>
       </div>
       <button class="hidden mt-4" id="restartGame"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-red-400 w-14 h-14">
     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></button>
@@ -114,9 +114,10 @@ fetch('https://dummyjson.com/posts')
   document.addEventListener('keydown', ()=>{
     $input.focus()
   })
+  document.addEventListener('touchstart', () => {
+    $input.focus();
+  });
   $input.addEventListener('keydown', onKeyDown);
-  $input.addEventListener('input', onInput);
-  
   $input.addEventListener('keyup', onKeyUp);
   }
   // Función al terminar el juego, muestra resultados etc.
@@ -238,20 +239,9 @@ if (fetchError) {
 
   }
     // Donde apreta algún tipo de tecla hace el juego comprueba que apretó, y cuál era la tecla, y así va hasta el final, dónde la última tira el ENDGAME.
-    function onInput(e) {
-  const { value } = e.target;
-  
-  // Detectamos si el último carácter es un espacio
-  if (value.endsWith(' ')) {
-    // Simulamos un evento de keydown con la tecla espacio
-    onKeyDown({ key: ' ', preventDefault: () => {} });
-  }
-}
-
-  function onKeyDown(e){
-  const $currentWord = $parraf.querySelector('x-word.active');
-  const $currentLetter = $currentWord ? $currentWord.querySelector('x-letter.active') : null;
-  
+    function onKeyDown(e){
+      const $currentWord = $parraf.querySelector('x-word.active');
+      const $currentLetter = $currentWord ? $currentWord.querySelector('x-letter.active') : null;
   const { key } = e;
   if(key === ' '){
     e.preventDefault();

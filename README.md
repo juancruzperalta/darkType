@@ -39,13 +39,10 @@
   - Testing the host ✔
 - **03-10-2024**
   - In phone practice too ✔
+- **07-10-2024**
+  - Server build ✔
 
 ---
-
-# Testing problems
-
-- Bug in using in phone...
-- I resolve...
 
 # Special Thanks
 
