@@ -207,12 +207,17 @@ if (fetchError) {
 }
 
 }
+//Actualizo la bd...
   async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, dateValue, userId){
+        const wpmNumber = Math.round(Number(wpmValue));
+        const currentWp = Math.round(Number(currentWpm));
+const accuracyNumber = Math.round(Number(accuracyValue));
+const currentAccurac = Math.round(Number(currentAccuracy));
    const { data, error } = await supabase
       .from('score')
       .update({
-        wpm: Math.max(wpmValue, currentWpm),
-        accuracy: Math.max(accuracyValue, currentAccuracy),
+        wpm: Math.max(wpmNumber, currentWp),
+        accuracy: Math.max(accuracyNumber, currentAccurac),
         date: dateValue,
       })
       .eq('id', userId);
@@ -220,6 +225,7 @@ if (fetchError) {
       console.log(data);
       console.log(error);
   }
+  //inserto en la bd...
   async function insertScoreInTheDB(wpmValue, accuracyValue,dateValue, user){
       const username = user.user_metadata.username;
     if (isNaN(wpmValue) || isNaN(accuracyValue)) {
