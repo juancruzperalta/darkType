@@ -226,12 +226,14 @@ if (fetchError) {
         console.error('Error: One or two values is not valid.', { wpmValue, accuracyValue});
         return;
       }
+      const wpmNumber = Math.round(Number(wpmValue));
+const accuracyNumber = Math.round(Number(accuracyValue));
     const { data, error } = await supabase.from('score').insert([
           {
             id: user.id,
             user_name: username,
-            wpm: Number(wpmValue),
-            accuracy: Number(accuracyValue),
+            wpm: wpmNumber,
+            accuracy: accuracyNumber,
             date: dateValue,
           }
         ]);
