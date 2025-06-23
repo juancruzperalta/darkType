@@ -207,17 +207,12 @@ if (fetchError) {
 }
 
 }
-//Actualizo la bd...
   async function updateScoreInTheDB(wpmValue, currentWpm, accuracyValue, currentAccuracy, dateValue, userId){
-        const wpmNumber = Math.round(Number(wpmValue));
-        const currentWp = Math.round(Number(currentWpm));
-const accuracyNumber = Math.round(Number(accuracyValue));
-const currentAccurac = Math.round(Number(currentAccuracy));
    const { data, error } = await supabase
       .from('score')
       .update({
-        wpm: Math.max(wpmNumber, currentWp),
-        accuracy: Math.max(accuracyNumber, currentAccurac),
+        wpm: Math.max(wpmValue, currentWpm),
+        accuracy: Math.max(accuracyValue, currentAccuracy),
         date: dateValue,
       })
       .eq('id', userId);
@@ -225,21 +220,18 @@ const currentAccurac = Math.round(Number(currentAccuracy));
       console.log(data);
       console.log(error);
   }
-  //inserto en la bd...
   async function insertScoreInTheDB(wpmValue, accuracyValue,dateValue, user){
       const username = user.user_metadata.username;
     if (isNaN(wpmValue) || isNaN(accuracyValue)) {
         console.error('Error: One or two values is not valid.', { wpmValue, accuracyValue});
         return;
       }
-      const wpmNumber = Math.round(Number(wpmValue));
-const accuracyNumber = Math.round(Number(accuracyValue));
     const { data, error } = await supabase.from('score').insert([
           {
             id: user.id,
             user_name: username,
-            wpm: wpmNumber,
-            accuracy: accuracyNumber,
+            wpm: wpmValue,
+            accuracy: accuracyValue,
             date: dateValue,
           }
         ]);
