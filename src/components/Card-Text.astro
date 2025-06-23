@@ -230,12 +230,13 @@ if (fetchError) {
           {
             id: user.id,
             user_name: username,
-            wpm: wpmValue,
-            accuracy: accuracyValue,
+            wpm: Number(wpmValue),
+            accuracy: Number(accuracyValue),
             date: dateValue,
           }
         ]);
-
+      console.log(data);
+      console.log(error);
 
   }
     // Donde apreta algún tipo de tecla hace el juego comprueba que apretó, y cuál era la tecla, y así va hasta el final, dónde la última tira el ENDGAME.
