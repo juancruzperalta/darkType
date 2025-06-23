@@ -151,7 +151,16 @@ formRegister.addEventListener('submit', async (e) => {
     messageErrorFunc("You must enter all fields");
     return;
   }
+const { data, error } = await supabase.auth.signUp({ email, password });
 
+if (error) {
+  console.error("Error al registrarse:", error);
+  return;
+}
+
+if (data && data.user) {
+  console.log("ID del usuario:", data.user.id);
+}
   const response = await registerUser(userName, email, password);
   formRegister.reset();
   }
