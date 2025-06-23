@@ -110,18 +110,30 @@ async function registerUser(userName, email, password) {
       }
     }
   });
-  if (data) {
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([{ id: data.user.id, email: email, username: userName }]);
-
-    if (profileError) {
-      messageErrorFunc(`Error inserting profile: ${profileError.message}`);
-    } else {
-      messageErrorFunc(`Please check your email to confirm registration for ${email}`);
-    }
+if (error) {
+    messageErrorFunc("Error signing up: " + error.message);
+    return;
   }
-  return { data, error }; 
+
+  const userId = data.user?.id;
+
+  if (!userId) {
+    messageErrorFunc("User ID not returned yet. Check your email to confirm registration.");
+    return;
+  }
+
+  // Asegurate de tener la política INSERT en 'profiles'
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .insert([{ id: userId, email, username: userName }]);
+
+  if (profileError) {
+    messageErrorFunc(`Error inserting profile: ${profileError.message}`);
+  } else {
+    messageErrorFunc(`Check your email to confirm registration for ${email}`);
+  }
+
+  return { data, error };
 }
 
 const messageLoginFunc = (msg) => {
@@ -151,16 +163,7 @@ formRegister.addEventListener('submit', async (e) => {
     messageErrorFunc("You must enter all fields");
     return;
   }
-//const { data, error } = await supabase.auth.signUp({ email, password });
 
-// if (error) {
-//   console.error("Error al registrarse:", error);
-//   return;
-// }
-
-// if (data && data.user) {
-//   console.log("ID del usuario:", data.user.id);
-// }
   const response = await registerUser(userName, email, password);
   formRegister.reset();
   }
